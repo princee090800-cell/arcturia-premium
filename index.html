@@ -130,7 +130,7 @@
   .hero-sub b{color:var(--ink)}
   .rot{display:inline-block;height:1.32em;overflow:hidden;vertical-align:bottom}
   .rot-in{display:flex;flex-direction:column;animation:rotup 13s cubic-bezier(.75,0,.2,1) infinite}
-  .rot-in span{height:1.32em;line-height:1.32em;font-weight:800;white-space:nowrap;background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .rot-in span{height:1.32em;line-height:1.32em;font-weight:800;white-space:nowrap;text-align:center;background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent}
   @keyframes rotup{0%,12%{transform:translateY(0)}16.6%,28.6%{transform:translateY(-1.32em)}33.3%,45.3%{transform:translateY(-2.64em)}50%,62%{transform:translateY(-3.96em)}66.6%,78.6%{transform:translateY(-5.28em)}83.3%,95.3%{transform:translateY(-6.6em)}100%{transform:translateY(-7.92em)}}
   .hero-ctas{display:flex;gap:13px;flex-wrap:wrap;margin-top:34px}
   .hero-proof{display:flex;gap:10px 24px;flex-wrap:wrap;margin-top:34px}
@@ -167,7 +167,8 @@
   .spin-core span{width:46px;height:46px;border-radius:50%;background:var(--grad);display:grid;place-items:center;color:#2A1D04;box-shadow:var(--shadow-gold)}
   .spin-core svg{width:20px;height:20px}
   @keyframes spin{to{transform:rotate(360deg)}}
-  .sticker{position:absolute;top:46%;left:-38px;transform:rotate(-7deg);background:var(--grad);color:#2A1D04;font-weight:800;font-size:.84rem;padding:10px 17px;border-radius:12px;box-shadow:var(--shadow-gold);z-index:4;animation:floaty 6.5s ease-in-out infinite;white-space:nowrap}
+  .sticker{position:absolute;top:46%;left:-38px;transform:rotate(-7deg);background:var(--grad);color:#2A1D04;font-weight:800;font-size:.84rem;padding:10px 17px;border-radius:12px;box-shadow:var(--shadow-gold);z-index:4;animation:floatyTilt 6.5s ease-in-out infinite;white-space:nowrap}
+  @keyframes floatyTilt{0%,100%{transform:rotate(-7deg) translateY(0)}50%{transform:rotate(-7deg) translateY(-9px)}}
   @media (max-width:1020px){
     .hero-grid{grid-template-columns:1fr;gap:72px}
     .hero-img-card img{height:380px}
@@ -344,7 +345,8 @@
     .mobile-bar a{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:.74rem;font-weight:800;text-decoration:none;padding:7px 4px;border-radius:12px;color:var(--ink2);min-height:44px}
     .mobile-bar a svg{width:21px;height:21px}
     .mobile-bar a.mid{background:var(--grad);color:#2A1D04}
-    .wa-float{bottom:94px}
+    /* WhatsApp already lives in the bottom bar — a second floating button only overlaps content */
+    .wa-float{display:none}
     .hero{padding-top:34px}
     .hero h1{font-size:2.45rem;margin:4px 0 14px}
     .hero-sub{font-size:1.02rem}
@@ -397,6 +399,31 @@
     .float-card{padding:10px 13px;max-width:72vw}
     .float-card b{font-size:.84rem}
     .float-card span{font-size:.72rem}
+  }
+
+  /* ===== Bug-fix pass: floating elements & glitches ===== */
+  /* clip (not hidden) keeps the sticky header working in every browser;
+     browsers without clip support simply keep the base hidden rule */
+  body{overflow-x:clip}
+  /* Honeypot anchors inside the form instead of the whole section */
+  form.book-form{position:relative}
+  /* A menu opened on a phone must never linger after resizing to desktop */
+  @media (min-width:1021px){.mobile-menu{display:none !important}}
+  /* Mid-width desktops: pull the hero float cards & sticker inside the
+     viewport so their edges are never clipped by the hero's overflow */
+  @media (max-width:1340px) and (min-width:1021px){
+    .fc1{left:-10px}
+    .fc2{right:-10px}
+    .sticker{left:-10px}
+  }
+  @media (max-width:760px){
+    /* Bottom bar: every cell the same height, label centred — the wrapped
+       "Book Free Call" cell no longer makes the bar look uneven */
+    .mobile-bar a{justify-content:center;text-align:center;line-height:1.2}
+  }
+  @media (max-width:560px){
+    /* Softer Instagram glow on phones — no pink smudge bleeding under the header */
+    .icon-btn.ig{box-shadow:0 6px 14px rgba(214,41,118,.22)}
   }
 </style>
 </head>
@@ -898,9 +925,10 @@
   burger.addEventListener('click', function(){
     var open = menu.classList.toggle('open');
     burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    burger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
   });
   menu.querySelectorAll('a').forEach(function(a){
-    a.addEventListener('click', function(){ menu.classList.remove('open'); burger.setAttribute('aria-expanded','false'); });
+    a.addEventListener('click', function(){ menu.classList.remove('open'); burger.setAttribute('aria-expanded','false'); burger.setAttribute('aria-label','Open menu'); });
   });
 
   // Duplicate marquee content for a seamless loop
@@ -966,7 +994,10 @@
   var waBtn = document.getElementById('bkWaBtn');
   var mailBtn = document.getElementById('bkMailBtn');
   var dateEl = document.getElementById('bkDate');
-  dateEl.min = new Date().toISOString().split('T')[0];
+  // Local calendar date (toISOString is UTC — in IST it can allow yesterday early in the morning)
+  var nowLocal = new Date();
+  var pad2 = function(n){ return (n < 10 ? '0' : '') + n; };
+  dateEl.min = nowLocal.getFullYear() + '-' + pad2(nowLocal.getMonth() + 1) + '-' + pad2(nowLocal.getDate());
 
   function scrollToBook(){ document.getElementById('book').scrollIntoView({ behavior: 'smooth' }); }
 
