@@ -67,7 +67,12 @@
   .aurora .a2{width:480px;height:480px;background:radial-gradient(circle,rgba(249,178,120,.30),transparent 65%);bottom:-200px;left:-140px;animation:drift 26s ease-in-out infinite alternate-reverse}
   .aurora .a3{width:380px;height:380px;background:radial-gradient(circle,rgba(238,42,123,.08),transparent 65%);top:38%;left:55%;animation:drift 30s ease-in-out infinite alternate}
   @keyframes drift{from{transform:translate(0,0) scale(1)}to{transform:translate(-70px,50px) scale(1.12)}}
-  main,footer,header.topbar{position:relative;z-index:1}
+  main,footer{position:relative;z-index:1}
+  /* NOTE: header.topbar must NOT be in the rule above — "header.topbar"
+     outranks ".topbar" in specificity and its position:relative was
+     silently cancelling the header's position:sticky, so the whole
+     header scrolled away and disappeared. The .topbar rule below
+     (sticky, z-index:60) now governs the header on its own. */
   .progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--grad);z-index:99;box-shadow:0 0 12px rgba(185,138,47,.55)}
   .glow{position:fixed;top:0;left:0;width:560px;height:560px;margin:-280px 0 0 -280px;border-radius:50%;background:radial-gradient(circle,rgba(233,201,121,.20),transparent 65%);pointer-events:none;z-index:3;opacity:0;transition:opacity .6s}
   @media (hover:none),(pointer:coarse){.glow{display:none}}
