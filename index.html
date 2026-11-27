@@ -360,6 +360,44 @@
     .rv{transform:none}
     .hero-copy>*,.hero-visual{animation:none}
   }
+
+  /* ===== Mobile fit fixes ===== */
+  html{overflow-x:clip}
+  section[id],.hero[id]{scroll-margin-top:96px}
+  @media (max-width:760px){
+    .wrap{padding:0 18px}
+    /* Lighter ambient wash on phones — same look, no scroll jank */
+    .aurora i{filter:blur(64px)}
+    .aurora .a1,.aurora .a2,.aurora .a3{animation:none}
+  }
+  @media (max-width:560px){
+    /* Header row must fit the phone: smaller brand + controls, nothing clipped */
+    .topbar-in{gap:8px;padding:10px 18px}
+    .brand{gap:9px;min-width:0}
+    .brand-mark{width:38px;height:38px;font-size:1.25rem}
+    .brand-name{font-size:1.12rem;letter-spacing:.16em}
+    .brand small{font-size:.5rem;letter-spacing:.24em;margin-top:3px}
+    .top-ctas{gap:7px}
+    .icon-btn{width:40px;height:40px}
+    .icon-btn svg{width:19px;height:19px}
+    .burger{width:42px;height:42px}
+    .mobile-menu{padding:8px 18px 16px}
+    .announce{font-size:.8rem;padding:9px 12px}
+    /* 16px fields stop iOS auto-zoom when the booking form is tapped */
+    input,select,textarea{font-size:16px}
+  }
+  @media (max-width:400px){
+    /* WhatsApp already lives in the bottom bar + floating button */
+    .top-ctas .icon-btn.wa{display:none}
+  }
+  @media (max-width:480px){
+    .hero-ctas{flex-direction:column;align-items:stretch}
+    .hero-ctas .btn{width:100%}
+    .hero-img-card img{height:320px}
+    .float-card{padding:10px 13px;max-width:72vw}
+    .float-card b{font-size:.84rem}
+    .float-card span{font-size:.72rem}
+  }
 </style>
 </head>
 <body>
